@@ -25,6 +25,11 @@ complex<float> coeff = {-0.835f, -0.2321f};
 
 vector<color> pixel_buffer(screen_width *screen_height);
 
+void update_viewport() {
+  stepsize_x = (x_max - x_min) / screen_width;
+  stepsize_y = (y_max - y_min) / screen_height;
+}
+
 void draw_shadow() {
   for (int i = 0; i < screen_width; ++i) {
     for (int j = 0; j < screen_height; ++j) {
@@ -71,27 +76,27 @@ int main() {
 
   // run the program as long as the window is open
   while (window.isOpen()) {
-    // auto mouse_position = sf::Mouse::getPosition(window);
-    // int mouse_x = mouse_position.x;
-    // int mouse_y = mouse_position.y;
-    //
-    // float x = mouse_x * stepsize_x + x_min;
-    // float y = mouse_y * stepsize_y + y_min;
+    auto mouse_position = sf::Mouse::getPosition(window);
+    int mouse_x = mouse_position.x;
+    int mouse_y = mouse_position.y;
 
     // check all the window's events that were triggered since the last
     // iteration of the loop
     sf::Event event;
     while (window.pollEvent(event)) {
       // "close requested" event: we close the window
-      if (event.type == sf::Event::Closed)
+      if (event.type == sf::Event::Closed) {
         window.close();
+      } else if (event.type == sf::Event::Resized) {
+        screen_width = event.size.width;
+        screen_height = event.size.height;
+        update_viewport();
+        glViewport(0, 0, screen_width, screen_height);
+        pixel_buffer.resize(screen_width * screen_height);
+      }
     }
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-      auto mouse_position = sf::Mouse::getPosition(window);
-      int mouse_x = mouse_position.x;
-      int mouse_y = mouse_position.y;
-
       coeff = {mouse_x * stepsize_x + x_min, mouse_y * stepsize_y + y_min};
       draw_julia_set();
     }
