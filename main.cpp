@@ -20,7 +20,7 @@ float y_min = -1.0f;
 float stepsize_x = (x_max - x_min) / screen_width;
 float stepsize_y = (y_max - y_min) / screen_height;
 
-int max_iterations = 2 << 5;
+int max_iterations = 2 << 10;
 complex<float> coeff = {-0.835f, -0.2321f};
 
 vector<color> pixel_buffer(screen_width *screen_height);
@@ -52,7 +52,7 @@ void draw_julia_set() {
       }
       auto scale = log(1.f + static_cast<float>(it)) /
                    log(1.f + static_cast<float>(max_iterations));
-      pixel_buffer[index] = {scale, scale, scale, 1};
+      pixel_buffer[index] = {scale, scale, 0.5, 1};
     }
   }
 }
